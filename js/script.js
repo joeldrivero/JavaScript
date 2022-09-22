@@ -1,26 +1,36 @@
 class Producto {
   constructor(obj) {
+    this.id=obj.id;
     this.producto = obj.producto.toUpperCase();
     this.precio = parseFloat(obj.precio);
   }
 }
-
 var venta = [];
 generarCatalogo();
 var products = obtenerCatalogo();
-console.log(products);
 
-function generarCatalogo() {
-  const productosCarrito = [
-    { id: 1, producto: "Coca Cola", precio: 130 },
-    { id: 2, producto: "Jugo Saborizado", precio: 140 },
-    { id: 3, producto: "Cerveza", precio: 200 },
-  ];
-  const guardarLocal = (clave, valor) => {
-    localStorage.setItem(clave, valor);
-  };
-  guardarLocal("ListaProductos", JSON.stringify(productosCarrito));
+
+const contenedorProductos = document.getElementById("productos");
+products.forEach(producto => {
+  const div = document.createElement("div")
+  div.classList.add("card")
+  div.innerHTML = `<div class="card-title">${producto.producto}</div>
+  <div class="card-body">${producto.precio}</div>
+  <input class="cantidad" type="number">
+  <button id="agregar${producto.id}" onclick="agregarAlCarrito(${producto.id})" class="boton-agregar">Agregar</button>`
+  contenedorProductos.appendChild(div);
+
+
+
+});
+
+
+const agregarAlCarrito = (prodId) =>{
+  const item = products.find((prod) => prod.id ===prodId)
+  console.log(item)
+
 }
+
 
 function obtenerCatalogo() {
   const almacenados = JSON.parse(localStorage.getItem("ListaProductos"));
@@ -48,6 +58,19 @@ function cerrarVenta(venta){
   venta = [];
 
 }
+
+function generarCatalogo() {
+  const productosCarrito = [
+    { id: 1, producto: "Coca Cola", precio: 130 },
+    { id: 2, producto: "Jugo Saborizado", precio: 140 },
+    { id: 3, producto: "Cerveza", precio: 200 },
+  ];
+  const guardarLocal = (clave, valor) => {
+    localStorage.setItem(clave, valor);
+  };
+  guardarLocal("ListaProductos", JSON.stringify(productosCarrito));
+}
+
 
 function agregarProducto(id) {
   var orden = 0;
