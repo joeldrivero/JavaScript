@@ -40,7 +40,6 @@ function obtenerCatalogo() {
 
 function cerrarVenta() {
   var precioFinal = 0;
-  debugger;
   for (let i = 0; i < venta.length; i++) {
     precioFinal += venta[i];
   }
@@ -69,31 +68,32 @@ function generarCatalogo() {
 }
 
 function agregarProducto(prodId) {
-
-  debugger;
   const item = products.find((prod) => prod.id === prodId);
   let cantidad = document.getElementsByClassName("cantidad")[prodId - 1].value;
-  validarCantidad(cantidad);
-  console.log(item);
-  const elementos = document.getElementById("carrito")
-  const agregarACarrito = document.createElement("div")
-  agregarACarrito.classList.add("card");
-  agregarACarrito.innerHTML = `<div class="product">PRODUCTO: ${
-    item.producto
-  } | PRECIO: $${item.precio} | CANTIDAD: ${cantidad} | PRECIO TOTAL: $${
-    item.precio * cantidad
+  if(cantidad>0){
+    console.log(item);
+    const elementos = document.getElementById("carrito")
+    const agregarACarrito = document.createElement("div")
+    agregarACarrito.classList.add("card");
+    agregarACarrito.innerHTML = `<div class="product">PRODUCTO: ${
+      item.producto
+    } | PRECIO: $${item.precio} | CANTIDAD: ${cantidad} | PRECIO TOTAL: $${
+      item.precio * cantidad
+    }
+    <button type="button" value=${orden} onclick="sacarDeCarrito(value)" class="close" aria-label="Close">
+    <span aria-hidden="true">&times;</span> 
+    </button></div>
+  `;
+    elementos.appendChild(agregarACarrito);
+    venta.push(item.precio * cantidad);
+    orden++;
   }
-  <button type="button" value=${orden} onclick="sacarDeCarrito(value)" class="close" aria-label="Close">
-  <span aria-hidden="true">&times;</span> 
-  </button></div>
-`;
-  elementos.appendChild(agregarACarrito);
-  venta.push(item.precio * cantidad);
-  orden++;
+  else{
+    console.log("ERROR: Ingrese una cantidad correcta")
+  }
 }
 
 function vaciarCarrito() {
-  debugger;
   var eliminarFinal = document.getElementsByClassName("producto-final");
   var eliminar = document.getElementsByClassName("product");
   while (eliminar.length != 0) {
@@ -108,19 +108,13 @@ function vaciarCarrito() {
 }
 
 function sacarDeCarrito(valor) {
-  debugger;
   var eliminar = document.getElementsByClassName("product");
   console.log(venta);
- /*  const item = products.find((valor) => ventas === valor); */
+
   eliminar[valor].remove();
 }
 
-function validarCantidad(cantidad) {
-  console.log(cantidad);
-}
-
 function nuevaVenta(){
-  debugger;
   vaciarCarrito();
   venta.shift();
   orden = 0;
