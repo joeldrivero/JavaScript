@@ -1,36 +1,31 @@
 class Producto {
   constructor(obj) {
-    this.id=obj.id;
+    this.id = obj.id;
     this.producto = obj.producto.toUpperCase();
     this.precio = parseFloat(obj.precio);
   }
 }
+var orden = 0;
 var venta = [];
 generarCatalogo();
 var products = obtenerCatalogo();
 
-
 const contenedorProductos = document.getElementById("productos");
-products.forEach(producto => {
-  const div = document.createElement("div")
-  div.classList.add("card")
+products.forEach((producto) => {
+  const div = document.createElement("div");
+  div.classList.add("card");
   div.innerHTML = `<div class="card-title">${producto.producto}</div>
-  <div class="card-body">${producto.precio}</div>
+  <div class="card-body">PRECIO: $${producto.precio}</div>
+  <p>Seleccione la cantidad</p>
   <input class="cantidad" type="number">
-  <button id="agregar${producto.id}" onclick="agregarAlCarrito(${producto.id})" class="boton-agregar">Agregar</button>`
+  <button id="agregar${producto.id}" onclick="agregarProducto(${producto.id})" class="boton-agregar">Agregar</button>`;
   contenedorProductos.appendChild(div);
-
-
-
 });
 
-
-const agregarAlCarrito = (prodId) =>{
-  const item = products.find((prod) => prod.id ===prodId)
-  console.log(item)
-
-}
-
+const agregarAlCarrito = (prodId) => {
+  const item = products.find((prod) => prod.id === prodId);
+  console.log(item);
+};
 
 function obtenerCatalogo() {
   const almacenados = JSON.parse(localStorage.getItem("ListaProductos"));
@@ -43,20 +38,22 @@ function obtenerCatalogo() {
   return productos;
 }
 
-function cerrarVenta(venta){
+function cerrarVenta() {
   var precioFinal = 0;
-  for(let i=0;i<venta.length;i++){
-    precioFinal+=venta[i];
+  debugger;
+  for (let i = 0; i < venta.length; i++) {
+    precioFinal += venta[i];
   }
   console.log(precioFinal);
-  var carrito = document.querySelector(".carrito");
+  const elementos = document.getElementById("carrito")
+  const agregarACarrito = document.createElement("div")
+  agregarACarrito.classList.add("card");
+  agregarACarrito.innerHTML = `<div class="producto-final">EL PRECIO FINAL ES DE:$ ${precioFinal}</div>`;
+  elementos.appendChild(agregarACarrito);
 
-  const agregarACarrito = document.createElement("div");
-  agregarACarrito.innerHTML = `<br><div class="product">EL PRECIO FINAL ES DE:$ ${precioFinal}</div>`;
-  carrito.appendChild(agregarACarrito);
-  orden=0;
+  orden = 0;
   venta = [];
-
+  precioFinal=0;
 }
 
 function generarCatalogo() {
@@ -71,50 +68,61 @@ function generarCatalogo() {
   guardarLocal("ListaProductos", JSON.stringify(productosCarrito));
 }
 
+function agregarProducto(prodId) {
 
-function agregarProducto(id) {
-  var orden = 0;
-  let producto = products[id];
-  let cantidad = document.getElementsByClassName("cantidad")[id].value;
+  debugger;
+  const item = products.find((prod) => prod.id === prodId);
+  let cantidad = document.getElementsByClassName("cantidad")[prodId - 1].value;
   validarCantidad(cantidad);
-  console.log(producto.producto);
-
-  var carrito = document.querySelector(".carrito");
-
-  const agregarACarrito = document.createElement("div");
-  agregarACarrito.innerHTML = `<div class="product">PRODUCTO: ${producto.producto} | PRECIO: $${producto.precio} | CANTIDAD: ${cantidad} | PRECIO TOTAL:$${producto.precio*cantidad}</div>
+  console.log(item);
+  const elementos = document.getElementById("carrito")
+  const agregarACarrito = document.createElement("div")
+  agregarACarrito.classList.add("card");
+  agregarACarrito.innerHTML = `<div class="product">PRODUCTO: ${
+    item.producto
+  } | PRECIO: $${item.precio} | CANTIDAD: ${cantidad} | PRECIO TOTAL: $${
+    item.precio * cantidad
+  }
   <button type="button" value=${orden} onclick="sacarDeCarrito(value)" class="close" aria-label="Close">
   <span aria-hidden="true">&times;</span> 
-  </button>`;
-  carrito.appendChild(agregarACarrito);
-  venta.push(producto.precio*cantidad);
+  </button></div>
+`;
+  elementos.appendChild(agregarACarrito);
+  venta.push(item.precio * cantidad);
   orden++;
-
 }
 
-function vaciarCarrito(){
+function vaciarCarrito() {
   debugger;
+  var eliminarFinal = document.getElementsByClassName("producto-final");
   var eliminar = document.getElementsByClassName("product");
-  var eliminarBoton = document.getElementsByClassName("close");
-while(eliminar.length!=0){
-  eliminar[0].remove();
-  eliminarBoton[0].remove();
-}
-
-  orden=0;
+  while (eliminar.length != 0) {
+    console.log(eliminar);
+    eliminar[0].remove();
+  }
+  while (eliminarFinal.length != 0) {
+    eliminarFinal[0].remove();
+  }
+  orden = 0;
   venta = [];
 }
 
 function sacarDeCarrito(valor) {
+  debugger;
   var eliminar = document.getElementsByClassName("product");
-  var eliminarBoton = document.getElementsByClassName("close");
-  console.log(valor);
+  console.log(venta);
+ /*  const item = products.find((valor) => ventas === valor); */
   eliminar[valor].remove();
-  eliminarBoton[valor].remove();
-
 }
 
 function validarCantidad(cantidad) {
   console.log(cantidad);
 }
 
+function nuevaVenta(){
+  debugger;
+  vaciarCarrito();
+  venta.shift();
+  orden = 0;
+  precioFinal=0;
+}

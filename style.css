@@ -1,0 +1,46 @@
+#productos{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#productos .card{
+    display: flex;
+    align-items: center;
+    margin: 12px;
+    width: 18rem;
+}
+
+#productos .card input{
+    margin-bottom: 20px;
+    width: 3rem;
+}
+
+.card-title{
+    padding-top: 10px;
+    font-size:20px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.botones{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.botones button{
+    margin:5px
+}
+
+.product{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.producto-final{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
