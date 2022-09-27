@@ -32,7 +32,7 @@ function obtenerCatalogo() {
   const productos = [];
 
   for (const objeto of almacenados) {
-    productos.push(new Producto(objeto));
+    objeto ? productos.push(new Producto(objeto)) : alert("Catalogo Vacio");
   }
 
   return productos;
@@ -52,14 +52,20 @@ function cerrarVenta() {
 
   orden = 0;
   venta = [];
-  precioFinal=0;
+  precioFinal = 0;
 }
+
+
 
 function generarCatalogo() {
   const productosCarrito = [
     { id: 1, producto: "Coca Cola", precio: 130 },
     { id: 2, producto: "Jugo Saborizado", precio: 140 },
     { id: 3, producto: "Cerveza", precio: 200 },
+    { id: 4, producto: "Vino", precio: 500 },
+    { id: 5, producto: "Fernet", precio: 700 },
+    { id: 6, producto: "Agua con Gas", precio: 150 },
+    { id: 7, producto: "Agua sin Gas", precio: 150 },
   ];
   const guardarLocal = (clave, valor) => {
     localStorage.setItem(clave, valor);
@@ -70,16 +76,15 @@ function generarCatalogo() {
 function agregarProducto(prodId) {
   const item = products.find((prod) => prod.id === prodId);
   let cantidad = document.getElementsByClassName("cantidad")[prodId - 1].value;
-  if(cantidad>0){
+
+  if (cantidad > 0 && item != null) {
     console.log(item);
     const elementos = document.getElementById("carrito")
     const agregarACarrito = document.createElement("div")
     agregarACarrito.classList.add("card");
-    agregarACarrito.innerHTML = `<div class="product">PRODUCTO: ${
-      item.producto
-    } | PRECIO: $${item.precio} | CANTIDAD: ${cantidad} | PRECIO TOTAL: $${
-      item.precio * cantidad
-    }
+    agregarACarrito.innerHTML = `<div class="product">PRODUCTO: ${item.producto
+      } | PRECIO: $${item.precio} | CANTIDAD: ${cantidad} | PRECIO TOTAL: $${item.precio * cantidad
+      }
     <button type="button" value=${orden} onclick="sacarDeCarrito(value)" class="close" aria-label="Close">
     <span aria-hidden="true">&times;</span> 
     </button></div>
@@ -88,7 +93,7 @@ function agregarProducto(prodId) {
     venta.push(item.precio * cantidad);
     orden++;
   }
-  else{
+  else {
     console.log("ERROR: Ingrese una cantidad correcta")
   }
 }
@@ -114,9 +119,10 @@ function sacarDeCarrito(valor) {
   eliminar[valor].remove();
 }
 
-function nuevaVenta(){
+function nuevaVenta() {
   vaciarCarrito();
   venta.shift();
   orden = 0;
-  precioFinal=0;
+  precioFinal = 0;
 }
+
