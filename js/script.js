@@ -101,7 +101,7 @@ function agregarProducto(prodId) {
 function vaciarCarrito() {
   var eliminarFinal = document.getElementsByClassName("producto-final");
   var eliminar = document.getElementsByClassName("product");
-  while (eliminar.length != 0) {
+  while (eliminar.length != 0 || eliminar == null) {
     console.log(eliminar);
     eliminar[0].remove();
   }
