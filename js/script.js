@@ -53,10 +53,13 @@ function cerrarVenta() {
   orden = 0;
   venta = [];
   precioFinal = 0;
+  Toastify({
+    text: "Venta realizada correctamente ¡Gracias por su compra!",
+    duration: 2000,
+    gravity: "top",
+    position: "center",
+  }).showToast();
 }
-
-
-
 function generarCatalogo() {
   const productosCarrito = [
     { id: 1, producto: "Coca Cola", precio: 130 },
@@ -92,9 +95,20 @@ function agregarProducto(prodId) {
     elementos.appendChild(agregarACarrito);
     venta.push(item.precio * cantidad);
     orden++;
+    Toastify({
+      text: `Se agregaron ${cantidad} unidades del producto ${item.producto}`,
+      duration: 3000,
+      gravity: "top",
+      position: "center",
+    }).showToast();
   }
   else {
-    console.log("ERROR: Ingrese una cantidad correcta")
+    Toastify({
+      text: " Por favor, ingrese una cantidad correcta",
+      duration: 2000,
+      gravity: "top",
+      position: "center",
+    }).showToast();
   }
 }
 
@@ -110,17 +124,39 @@ function vaciarCarrito() {
   }
   orden = 0;
   venta = [];
+  Toastify({
+    text: "Carrito vaciado correctamente",
+    duration: 1000,
+    gravity: "top",
+    position: "center",
+  }).showToast();
+
 }
 
 function sacarDeCarrito(valor) {
   var eliminar = document.getElementsByClassName("product");
   console.log(venta);
-
   eliminar[valor].remove();
+  Toastify({
+    text: "Producto eliminado",
+    duration: 1000,
+    gravity: "top",
+    position: "center",
+  }).showToast();
 }
 
 function nuevaVenta() {
-  vaciarCarrito();
+  var eliminarFinal = document.getElementsByClassName("producto-final");
+  var eliminar = document.getElementsByClassName("product");
+  while (eliminar.length != 0 || eliminar == null) {
+    console.log(eliminar);
+    eliminar[0].remove();
+  }
+  while (eliminarFinal.length != 0) {
+    eliminarFinal[0].remove();
+  }
+  orden = 0;
+  venta = [];
   venta.shift();
   orden = 0;
   precioFinal = 0;
