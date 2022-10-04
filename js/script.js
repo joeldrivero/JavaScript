@@ -5,6 +5,8 @@ class Producto {
     this.precio = parseFloat(obj.precio);
   }
 }
+
+var eliminados = 0;
 var orden = 0;
 var venta = [];
 generarCatalogo();
@@ -39,9 +41,10 @@ function obtenerCatalogo() {
 }
 
 function cerrarVenta() {
+  debugger;
   var precioFinal = 0;
   for (let i = 0; i < venta.length; i++) {
-    precioFinal += venta[i];
+    precioFinal += venta[i][0]["precioFinal"];
   }
   console.log(precioFinal);
   const elementos = document.getElementById("carrito")
@@ -49,16 +52,16 @@ function cerrarVenta() {
   agregarACarrito.classList.add("card");
   agregarACarrito.innerHTML = `<div class="producto-final">EL PRECIO FINAL ES DE:$ ${precioFinal}</div>`;
   elementos.appendChild(agregarACarrito);
-
-  orden = 0;
-  venta = [];
-  precioFinal = 0;
+  let botones = document.getElementById("botones");
+  botones.innerHTML = `
+  <button id=nuevaVenta onclick="nuevaVenta()">Nueva Venta</button>`;
   Toastify({
     text: "Venta realizada correctamente ¡Gracias por su compra!",
     duration: 2000,
     gravity: "top",
     position: "center",
   }).showToast();
+  reset();
 }
 function generarCatalogo() {
   const productosCarrito = [
@@ -77,9 +80,9 @@ function generarCatalogo() {
 }
 
 function agregarProducto(prodId) {
+  debugger
   const item = products.find((prod) => prod.id === prodId);
   let cantidad = document.getElementsByClassName("cantidad")[prodId - 1].value;
-
   if (cantidad > 0 && item != null) {
     console.log(item);
     const elementos = document.getElementById("carrito")
@@ -92,8 +95,19 @@ function agregarProducto(prodId) {
     <span aria-hidden="true">&times;</span> 
     </button></div>
   `;
+
+    let productoAgregarCarrito = [{
+      id: item.id,
+      producto: item.producto,
+      precio: item.precio,
+      cantidad: cantidad,
+      precioFinal: item.precio * cantidad
+    }]
+    console.log(productoAgregarCarrito);
+    localStorage.setItem(`${item.id}`, JSON.stringify(productoAgregarCarrito));
     elementos.appendChild(agregarACarrito);
-    venta.push(item.precio * cantidad);
+    //venta.push(item.precio * cantidad);
+    venta.push(productoAgregarCarrito);
     orden++;
     Toastify({
       text: `Se agregaron ${cantidad} unidades del producto ${item.producto}`,
@@ -101,6 +115,13 @@ function agregarProducto(prodId) {
       gravity: "top",
       position: "center",
     }).showToast();
+
+    if(venta.length==1){
+      let botones = document.getElementById("botones");
+      botones.innerHTML = `
+      <button id="CerrarVenta" onclick="cerrarVenta()">Cerrar Venta</button>
+      <button id="VaciarCarrito"onclick="vaciarCarrito()">Vaciar</button>`
+    }
   }
   else {
     Toastify({
@@ -113,36 +134,58 @@ function agregarProducto(prodId) {
 }
 
 function vaciarCarrito() {
+  localStorage.clear();
   var eliminarFinal = document.getElementsByClassName("producto-final");
+
   var eliminar = document.getElementsByClassName("product");
   while (eliminar.length != 0 || eliminar == null) {
-    console.log(eliminar);
     eliminar[0].remove();
   }
   while (eliminarFinal.length != 0) {
     eliminarFinal[0].remove();
   }
-  orden = 0;
-  venta = [];
   Toastify({
     text: "Carrito vaciado correctamente",
     duration: 1000,
     gravity: "top",
     position: "center",
   }).showToast();
-
+  var ocultarBotones = document.getElementById("CerrarVenta");
+  var vaciarCarrito = document.getElementById("VaciarCarrito");
+  ocultarBotones.remove();
+  vaciarCarrito.remove();
+  reset();
 }
 
 function sacarDeCarrito(valor) {
+  debugger
   var eliminar = document.getElementsByClassName("product");
-  console.log(venta);
-  eliminar[valor].remove();
+  if (valor == 0 || venta.length == 1) {
+    eliminar[0].remove();
+    venta.splice(0, 1);
+  }
+  else {
+    venta.splice(valor - eliminados, 1);
+    eliminar[valor - eliminados].remove();
+  }
+
   Toastify({
     text: "Producto eliminado",
     duration: 1000,
     gravity: "top",
     position: "center",
   }).showToast();
+  if (venta.length != 0) {
+    eliminados++;
+  }
+  else {
+    var ocultarBotones = document.getElementById("CerrarVenta");
+    var vaciarCarrito = document.getElementById("VaciarCarrito");
+    ocultarBotones.remove();
+    vaciarCarrito.remove();
+    reset()
+  }
+
 }
 
 function nuevaVenta() {
@@ -155,10 +198,14 @@ function nuevaVenta() {
   while (eliminarFinal.length != 0) {
     eliminarFinal[0].remove();
   }
-  orden = 0;
-  venta = [];
-  venta.shift();
-  orden = 0;
-  precioFinal = 0;
+  var nuevaVenta = document.getElementById("nuevaVenta");
+  nuevaVenta.remove();
+  reset();
 }
 
+function reset() {
+  venta=[];
+  orden = 0;
+  eliminados = 0;
+  precioFinal = 0;
+}

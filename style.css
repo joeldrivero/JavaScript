@@ -22,13 +22,13 @@
     font-family: 'Times New Roman', Times, serif;
 }
 
-.botones{
+#botones{
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.botones button{
+#botones button{
     margin:5px
 }
 
