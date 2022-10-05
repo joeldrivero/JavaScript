@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "producto": "Coca Cola",
+        "precio": 130
+    },
+    {
+        "id": 2,
+        "producto": "Jugo Saborizado",
+        "precio": 140
+    },
+    {
+        "id": 3,
+        "producto": "Cerveza",
+        "precio": 200
+    },
+    {
+        "id": 4,
+        "producto": "Vino",
+        "precio": 500
+    },
+    {
+        "id": 5,
+        "producto": "Fernet",
+        "precio": 700
+    },
+    {
+        "id": 6,
+        "producto": "Agua con Gas",
+        "precio": 150
+    },
+    {
+        "id": 7,
+        "producto": "Agua sin Gas",
+        "precio": 150
+    }
+]

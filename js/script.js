@@ -13,16 +13,20 @@ generarCatalogo();
 var products = obtenerCatalogo();
 
 const contenedorProductos = document.getElementById("productos");
-products.forEach((producto) => {
-  const div = document.createElement("div");
-  div.classList.add("card");
-  div.innerHTML = `<div class="card-title">${producto.producto}</div>
+
+fetch('/data.json')
+  .then((res) => res.json())
+  .then((data) => data.forEach((producto) => {
+    const div = document.createElement("div");
+    div.classList.add("card");
+    div.innerHTML = `<div class="card-title">${producto.producto}</div>
   <div class="card-body">PRECIO: $${producto.precio}</div>
   <p>Seleccione la cantidad</p>
   <input class="cantidad" type="number">
   <button id="agregar${producto.id}" onclick="agregarProducto(${producto.id})" class="boton-agregar">Agregar</button>`;
-  contenedorProductos.appendChild(div);
-});
+    contenedorProductos.appendChild(div);
+  }))
+
 
 const agregarAlCarrito = (prodId) => {
   const item = products.find((prod) => prod.id === prodId);
@@ -116,7 +120,7 @@ function agregarProducto(prodId) {
       position: "center",
     }).showToast();
 
-    if(venta.length==1){
+    if (venta.length == 1) {
       let botones = document.getElementById("botones");
       botones.innerHTML = `
       <button id="CerrarVenta" onclick="cerrarVenta()">Cerrar Venta</button>
@@ -204,7 +208,7 @@ function nuevaVenta() {
 }
 
 function reset() {
-  venta=[];
+  venta = [];
   orden = 0;
   eliminados = 0;
   precioFinal = 0;
