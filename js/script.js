@@ -5,15 +5,10 @@ class Producto {
     this.precio = parseFloat(obj.precio);
   }
 }
-
 var eliminados = 0;
 var orden = 0;
 var venta = [];
-generarCatalogo();
-var products = obtenerCatalogo();
-
 const contenedorProductos = document.getElementById("productos");
-
 fetch('/data.json')
   .then((res) => res.json())
   .then((data) => data.forEach((producto) => {
@@ -25,6 +20,7 @@ fetch('/data.json')
   <input class="cantidad" type="number">
   <button id="agregar${producto.id}" onclick="agregarProducto(${producto.id})" class="boton-agregar">Agregar</button>`;
     contenedorProductos.appendChild(div);
+    localStorage.setItem("Listado De Productos",JSON.stringify(data));
   }))
 
 
@@ -33,16 +29,6 @@ const agregarAlCarrito = (prodId) => {
   console.log(item);
 };
 
-function obtenerCatalogo() {
-  const almacenados = JSON.parse(localStorage.getItem("ListaProductos"));
-  const productos = [];
-
-  for (const objeto of almacenados) {
-    objeto ? productos.push(new Producto(objeto)) : alert("Catalogo Vacio");
-  }
-
-  return productos;
-}
 
 function cerrarVenta() {
   debugger;
@@ -67,25 +53,11 @@ function cerrarVenta() {
   }).showToast();
   reset();
 }
-function generarCatalogo() {
-  const productosCarrito = [
-    { id: 1, producto: "Coca Cola", precio: 130 },
-    { id: 2, producto: "Jugo Saborizado", precio: 140 },
-    { id: 3, producto: "Cerveza", precio: 200 },
-    { id: 4, producto: "Vino", precio: 500 },
-    { id: 5, producto: "Fernet", precio: 700 },
-    { id: 6, producto: "Agua con Gas", precio: 150 },
-    { id: 7, producto: "Agua sin Gas", precio: 150 },
-  ];
-  const guardarLocal = (clave, valor) => {
-    localStorage.setItem(clave, valor);
-  };
-  guardarLocal("ListaProductos", JSON.stringify(productosCarrito));
-}
 
 function agregarProducto(prodId) {
-  debugger
-  const item = products.find((prod) => prod.id === prodId);
+
+  const obtenerListado = JSON.parse(localStorage.getItem("Listado De Productos"));
+  const item = obtenerListado.find((prod) => prod.id === prodId);
   let cantidad = document.getElementsByClassName("cantidad")[prodId - 1].value;
   if (cantidad > 0 && item != null) {
     console.log(item);
@@ -110,7 +82,6 @@ function agregarProducto(prodId) {
     console.log(productoAgregarCarrito);
     localStorage.setItem(`${item.id}`, JSON.stringify(productoAgregarCarrito));
     elementos.appendChild(agregarACarrito);
-    //venta.push(item.precio * cantidad);
     venta.push(productoAgregarCarrito);
     orden++;
     Toastify({
