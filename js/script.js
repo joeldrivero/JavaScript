@@ -5,6 +5,7 @@ class Producto {
     this.precio = parseFloat(obj.precio);
   }
 }
+
 var eliminados = 0;
 var orden = 0;
 var venta = [];
@@ -20,23 +21,41 @@ fetch('/data.json')
   <input class="cantidad" type="number">
   <button id="agregar${producto.id}" onclick="agregarProducto(${producto.id})" class="boton-agregar">Agregar</button>`;
     contenedorProductos.appendChild(div);
-    localStorage.setItem("Listado De Productos",JSON.stringify(data));
+    localStorage.setItem("Listado De Productos", JSON.stringify(data));
   }))
 
+var ventaActual = JSON.parse(localStorage.getItem("Venta Actual"));
 
-const agregarAlCarrito = (prodId) => {
-  const item = products.find((prod) => prod.id === prodId);
-  console.log(item);
-};
-
+if (ventaActual.length > 0) {
+  for(const producto of ventaActual){
+    debugger
+    console.log(producto[0]);
+    const elementos = document.getElementById("carrito")
+    const agregarACarrito = document.createElement("div")
+    agregarACarrito.classList.add("card");
+    agregarACarrito.innerHTML = `<div class="product">PRODUCTO: ${producto[0].producto
+      } | PRECIO: $${producto[0].precio} | CANTIDAD: ${producto[0].cantidad} | PRECIO TOTAL: $${producto[0].precio * producto[0].cantidad
+      }
+    <button type="button" value=${orden} onclick="sacarDeCarrito(value)" class="close" aria-label="Close">
+    <span aria-hidden="true">&times;</span> 
+    </button></div>
+  `;  
+  elementos.appendChild(agregarACarrito); 
+  }
+  let botones = document.getElementById("botones");
+  botones.innerHTML = `
+  <button id="CerrarVenta" onclick="cerrarVenta()">Cerrar Venta</button>
+  <button id="VaciarCarrito"onclick="vaciarCarrito()">Vaciar</button>`
+}
 
 function cerrarVenta() {
   debugger;
   var precioFinal = 0;
-  for (let i = 0; i < venta.length; i++) {
-    precioFinal += venta[i][0]["precioFinal"];
+  ventaActual = JSON.parse(localStorage.getItem("Venta Actual"));
+  for(const ventaFinal of ventaActual){
+    precioFinal+= ventaFinal[0].precioFinal;
   }
-  console.log(precioFinal);
+
   const elementos = document.getElementById("carrito")
   const agregarACarrito = document.createElement("div")
   agregarACarrito.classList.add("card");
@@ -59,8 +78,8 @@ function agregarProducto(prodId) {
   const obtenerListado = JSON.parse(localStorage.getItem("Listado De Productos"));
   const item = obtenerListado.find((prod) => prod.id === prodId);
   let cantidad = document.getElementsByClassName("cantidad")[prodId - 1].value;
+
   if (cantidad > 0 && item != null) {
-    console.log(item);
     const elementos = document.getElementById("carrito")
     const agregarACarrito = document.createElement("div")
     agregarACarrito.classList.add("card");
@@ -71,7 +90,6 @@ function agregarProducto(prodId) {
     <span aria-hidden="true">&times;</span> 
     </button></div>
   `;
-
     let productoAgregarCarrito = [{
       id: item.id,
       producto: item.producto,
@@ -79,11 +97,16 @@ function agregarProducto(prodId) {
       cantidad: cantidad,
       precioFinal: item.precio * cantidad
     }]
+
     console.log(productoAgregarCarrito);
-    localStorage.setItem(`${item.id}`, JSON.stringify(productoAgregarCarrito));
     elementos.appendChild(agregarACarrito);
     venta.push(productoAgregarCarrito);
+    localStorage.setItem("Venta Actual", JSON.stringify(venta));
+    var ventaSession = JSON.parse(localStorage.getItem("Venta Actual"));
+    console.log(ventaSession[0]);
     orden++;
+
+
     Toastify({
       text: `Se agregaron ${cantidad} unidades del producto ${item.producto}`,
       duration: 3000,
@@ -91,7 +114,7 @@ function agregarProducto(prodId) {
       position: "center",
     }).showToast();
 
-    if (venta.length == 1) {
+    if (venta.length >= 1) {
       let botones = document.getElementById("botones");
       botones.innerHTML = `
       <button id="CerrarVenta" onclick="cerrarVenta()">Cerrar Venta</button>
@@ -109,7 +132,7 @@ function agregarProducto(prodId) {
 }
 
 function vaciarCarrito() {
-  localStorage.clear();
+  localStorage.removeItem("Venta Actual");
   var eliminarFinal = document.getElementsByClassName("producto-final");
 
   var eliminar = document.getElementsByClassName("product");
@@ -138,12 +161,13 @@ function sacarDeCarrito(valor) {
   if (valor == 0 || venta.length == 1) {
     eliminar[0].remove();
     venta.splice(0, 1);
+
   }
   else {
     venta.splice(valor - eliminados, 1);
     eliminar[valor - eliminados].remove();
   }
-
+  localStorage.setItem("Venta Actual", JSON.stringify(venta));
   Toastify({
     text: "Producto eliminado",
     duration: 1000,
@@ -179,7 +203,9 @@ function nuevaVenta() {
 }
 
 function reset() {
+  ventaActual = [];
   venta = [];
+  localStorage.removeItem("Venta Actual");
   orden = 0;
   eliminados = 0;
   precioFinal = 0;
